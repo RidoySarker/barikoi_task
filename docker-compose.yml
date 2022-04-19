@@ -1,0 +1,72 @@
+version: "3.7"
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: barikoi-nginx
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www/html:cached
+      - ./.docker/nginx:/etc/nginx/conf.d
+    networks:
+      - barikoi-network
+    depends_on:
+      - app
+
+  app:
+    build:
+      args:
+        user: Ridoy
+        uid: 1000
+      context: ./.docker/app
+      dockerfile: Dockerfile
+    image: barikoi
+    container_name: barikoi-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html:cached
+      - ./.docker/app/php-fpm.ini:/usr/local/etc/php/conf.d/99-app.ini
+    networks:
+      - barikoi-network
+    depends_on:
+      - database
+
+  database:
+    image: mariadb:10.5.8
+    container_name: barikoi-mariadb
+    restart: unless-stopped
+    ports:
+      - 3309:3304
+    volumes:
+      - barikoi-volume:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+    networks:
+      - barikoi-network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: barikoi-phpmyadmin
+    restart: unless-stopped
+    tty: true
+    depends_on:
+      - database
+    ports:
+      - 8088:80
+    environment:
+      PMA_HOST: database
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      UPLOAD_LIMIT: 300M
+    networks:
+      - barikoi-network
+networks:
+  barikoi-network:
+    driver: bridge
+
+volumes:
+  barikoi-volume:
+    driver: local
