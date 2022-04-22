@@ -20,8 +20,3 @@ Route::get('/', function () {
     event(new UserEvent($users));
     return view('welcome');
 });
-
-Route::get('/user', function () {
-    $users = User::query()->paginate();
-    event(new UserEvent($users));
-});
