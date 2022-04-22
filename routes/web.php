@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\UserEvent;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,8 +13,15 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', function () {
+    $users = User::query()->paginate();
+    event(new UserEvent($users));
     return view('welcome');
+});
+
+Route::get('/user', function () {
+    $users = User::query()->paginate();
+    event(new UserEvent($users));
 });

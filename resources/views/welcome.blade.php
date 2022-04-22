@@ -129,4 +129,13 @@
             </div>
         </div>
     </body>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        window.Echo.channel('user_Channel')
+        .listen('UserEvent', (e) => {
+            alert("From websocket");
+            console.log(e);
+
+        });
+    </script>
 </html>
