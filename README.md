@@ -33,5 +33,4 @@
 
 ```shell
    /laravel-websockets
-   /user
 ```
