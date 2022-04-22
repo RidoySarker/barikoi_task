@@ -15,9 +15,16 @@
    npm install
    php artisan key:generate
    php artisan jwt:secret
-   php artisan migrate
+   php artisan migrate:fresh --seed
    php artisan websocket:serve
 ```
+### Login credentials
+
+```shell
+   email: admin@admin.com
+   password : password
+```
+
 
 ### Endpoints
 
